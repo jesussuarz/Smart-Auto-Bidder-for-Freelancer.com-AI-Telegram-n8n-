@@ -1,6 +1,7 @@
 # Smart Auto Bidder for Freelancer.com AI + Telegram + n8n
 Smart Auto-Bidder for Freelancer.com (AI + Telegram Approval + n8n)
 
+![Image Description](https://github.com/jesussuarz/Smart-Auto-Bidder-for-Freelancer.com-AI-Telegram-n8n-/blob/93f297d5a9969ba4a79d730fcaa6c6d97e93bcf6/image.png)
 
 Fully automate your Freelancer.com bidding process using **n8n + AI + Telegram**.
 
