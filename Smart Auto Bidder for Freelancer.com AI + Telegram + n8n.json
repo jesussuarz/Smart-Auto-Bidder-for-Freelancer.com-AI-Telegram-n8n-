@@ -1,0 +1,1390 @@
+{
+  "name": "Freelancer.com big",
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://www.freelancer.com/api/projects/0.1/bids",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "project_id",
+              "value": "={{ $('ExtractDate').item.json['Project Id']}}"
+            },
+            {
+              "name": "bidder_id",
+              "value": "={{ $('SetInputs').item.json.My_ID.toNumber()}}"
+            },
+            {
+              "name": "amount",
+              "value": "={{ Math.floor(Number($('ExtractDate').item.json.Bid_avg || $('ExtractDate').item.json.budget_minimum)) }}"
+            },
+            {
+              "name": "period",
+              "value": "={{ 3 }}"
+            },
+            {
+              "name": "description",
+              "value": "={{ $('AI Agent 2').item.json.output }}"
+            },
+            {
+              "name": "profile_id",
+              "value": "={{ 1 }}"
+            },
+            {
+              "name": "milestone_percentage",
+              "value": "={{ 50 }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "2533cea1-37ad-4dcb-98af-b5f4cf790b54",
+      "name": "create a bid",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        3456,
+        656
+      ],
+      "typeVersion": 4.2,
+      "retryOnFail": true,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "rdap9NeG9jMsm4bG",
+          "name": "Header Auth account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "7e0422e1-4884-4c4b-a68a-b14a548d2416",
+              "operator": {
+                "name": "filter.operator.equals",
+                "type": "string",
+                "operation": "equals"
+              },
+              "leftValue": "={{ $json['result.projects'].status }}",
+              "rightValue": "active"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "206d4dce-1d4d-45af-89b5-a90d217147ff",
+      "name": "If",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        368,
+        1488
+      ],
+      "typeVersion": 2.2
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "631369c8-7f30-421f-b674-14437ca79080",
+              "name": "Title",
+              "type": "string",
+              "value": "={{ $json['result.projects'].title }}"
+            },
+            {
+              "id": "6f01140f-b31f-4c7f-9eaf-0ed999aea0dd",
+              "name": "seo_url",
+              "type": "string",
+              "value": "={{ \"https://www.freelancer.com/projects/\"+$json['result.projects'].seo_url}}"
+            },
+            {
+              "id": "645a6cdd-3054-4d36-87cd-00c2f1b5fb6f",
+              "name": "Description",
+              "type": "string",
+              "value": "={{ $json['result.projects'].description }}"
+            },
+            {
+              "id": "7eadce75-deee-4220-b7c6-1b552e914ff4",
+              "name": "Type",
+              "type": "string",
+              "value": "={{ $json['result.projects'].type }}"
+            },
+            {
+              "id": "9db53cd4-71bb-4959-aa3f-1ec56f4422a4",
+              "name": "budget_minimum",
+              "type": "number",
+              "value": "={{ $json['result.projects'].budget.minimum > 50 }}"
+            },
+            {
+              "id": "8c282c46-2974-42a2-9351-dc6f9ac44f77",
+              "name": "Budget_maximum",
+              "type": "number",
+              "value": "={{ $json['result.projects'].budget.maximum }}"
+            },
+            {
+              "id": "d37f87ef-1118-4200-9d47-0463f5040f7f",
+              "name": "Bid_count",
+              "type": "number",
+              "value": "={{ $json['result.projects'].bid_stats.bid_count }}"
+            },
+            {
+              "id": "75fb01ad-3c73-4c7a-b439-a573b57d41dc",
+              "name": "Bid_avg",
+              "type": "number",
+              "value": "={{ $json['result.projects'].bid_stats.bid_avg }}"
+            },
+            {
+              "id": "af1f4893-077b-4f6f-b3fe-b951c554af78",
+              "name": "result.projects[0].currency.code",
+              "type": "string",
+              "value": "={{ $json[\"result.projects\"].currency.code }} / {{ $json[\"result.projects\"].currency.code }} / {{ $json[\"result.projects\"].currency.name }}"
+            },
+            {
+              "id": "7fccd569-48d1-4aa6-b7cb-90a523aae112",
+              "name": "Project Id",
+              "type": "number",
+              "value": "={{ $json[\"result.projects\"].id }}"
+            },
+            {
+              "id": "605af89d-0642-4e7c-a18f-c00b51654c67",
+              "name": "short_description",
+              "type": "string",
+              "value": "={{ $json[\"result.projects\"].preview_description }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "2e7dea42-bdd1-4cd8-b30d-3f7cb39d4437",
+      "name": "ExtractDate",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        656,
+        1472
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c9c0ae7c-4aa2-4680-a017-025c2283ecdf",
+              "name": "search",
+              "type": "string",
+              "value": "={{ $('Edit Fields1').item.json.query }}"
+            },
+            {
+              "id": "72216c0f-9707-41bd-9603-75aef05e2202",
+              "name": "My_ID",
+              "type": "string",
+              "value": "={{ $json.result.id }}"
+            },
+            {
+              "id": "365c65cf-a949-42a2-ad2d-526bfa3b7f02",
+              "name": "ChatID",
+              "type": "number",
+              "value": "={{ $('Edit Fields1').item.json.ChatId }}"
+            },
+            {
+              "id": "74a7392d-74fc-4aa4-8af7-3a193ce59acc",
+              "name": "jobs_limit",
+              "value": "={{ $('Edit Fields1').item.json.jobs_limit }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d4bedad5-4ffe-428c-ad01-fa14b9e0da1f",
+      "name": "SetInputs",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        -336,
+        1504
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('SetInputs').item.json.ChatID }}",
+        "text": "=The bid is:   {{ $json.status }}.\n\nProposal: \n\n{{ $json.result.description }}\n\nJob Link: {{ $('ExtractDate').item.json.seo_url }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "83e3f45a-0d3a-4a99-919a-ece4078dfab5",
+      "name": "Send Succuss",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        3456,
+        1184
+      ],
+      "webhookId": "bbdaeb2c-e979-4fdd-9533-a5dc4c423b8d",
+      "typeVersion": 1.2,
+      "credentials": {
+        "telegramApi": {
+          "id": "Xcf8YmDfDfJ9EnEt",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "result.projects",
+        "include": "=",
+        "options": {}
+      },
+      "id": "3e2982b7-8f91-4a86-b67f-5c79933b0022",
+      "name": "GetProjects",
+      "type": "n8n-nodes-base.splitOut",
+      "position": [
+        128,
+        1488
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "43745d62-0f14-4335-9097-1c23cd3ed1ba",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "position": [
+        960,
+        1472
+      ],
+      "typeVersion": 3,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "url": "=https://www.freelancer.com/api/projects/0.1/projects/{{ $json[\"Project Id\"] }}/bids/",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "45e87e19-d858-4f8c-91b9-77585a6ed503",
+      "name": "checkBidding",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        1632,
+        1488
+      ],
+      "typeVersion": 4.2,
+      "retryOnFail": true,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "rdap9NeG9jMsm4bG",
+          "name": "Header Auth account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "result.bids",
+        "options": {}
+      },
+      "id": "036cc245-b5b9-4ba3-bf11-b95e0aed855d",
+      "name": "Split Out",
+      "type": "n8n-nodes-base.splitOut",
+      "position": [
+        1584,
+        1072
+      ],
+      "typeVersion": 1,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0a8c2fd3-ec1f-42ab-b417-fe99d3b8d1c6",
+              "name": "Bidder_id",
+              "type": "number",
+              "value": "={{ $json.bidder_id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "08bedc73-ba43-40b1-9e97-d63f66f46b69",
+      "name": "Edit Fields",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        1776,
+        1072
+      ],
+      "typeVersion": 3.4,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "Bidder_id"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "1876650e-e6cc-48ae-ab91-9dcae17810e3",
+      "name": "Aggregate",
+      "type": "n8n-nodes-base.aggregate",
+      "position": [
+        1968,
+        1072
+      ],
+      "typeVersion": 1,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "chatId": "={{ $('SetInputs').item.json.ChatID }}\n",
+        "message": "={{ $json.output }}\n\n-------------\nBid: {{ $('Loop Over Items').item.json.budget_minimum }} - {{ $('Loop Over Items').item.json.Bid_avg }} - {{ $('Loop Over Items').item.json.Budget_maximum }} \n\nCurrency: {{ $('Loop Over Items').item.json.result.projects[0].currency.code }}\n\nBid Count: {{ $('Loop Over Items').item.json.Bid_count }}",
+        "approvalOptions": {
+          "values": {
+            "approvalType": "double"
+          }
+        },
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "140a0303-840b-42e6-8aae-0015342cf4c5",
+      "name": "GetApproval",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        2416,
+        1072
+      ],
+      "webhookId": "8a408e11-f0b9-43ce-9bc2-dd8887883950",
+      "typeVersion": 1.2,
+      "credentials": {
+        "telegramApi": {
+          "id": "Xcf8YmDfDfJ9EnEt",
+          "name": "Telegram account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('SetInputs').item.json.ChatID }}",
+        "text": "Vale, lo cancelé.",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "4ae8a4b6-de9c-48b8-aea4-a1a98046acd8",
+      "name": "Canceled ",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        3200,
+        1088
+      ],
+      "webhookId": "8a408e11-f0b9-43ce-9bc2-dd8887883950",
+      "typeVersion": 1.2,
+      "credentials": {
+        "telegramApi": {
+          "id": "Xcf8YmDfDfJ9EnEt",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3622f872-99d8-4e41-b8c5-94db7574e395",
+              "name": "Message",
+              "type": "string",
+              "value": "\"You have already bid on this project\""
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "5ad342e2-be0a-4014-8b0c-dbc59aa2a045",
+      "name": "AlreadyBid",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        1984,
+        832
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "content": "# 🔁 Auto-Bidder for Freelancer.com with Telegram Approval and AI Proposals\n\nThis **n8n template** automates your freelance bidding workflow on [Freelancer.com](https://freelancer.com), combining API calls, Telegram interactions, and AI-generated proposals. Ideal for freelancers who want to bid smarter, faster, and hands-free.\n\n## ✨ Features\n\n- 🔍 **Skill-Based Project Search**  \n  Searches for active projects on Freelancer.com using your chosen skill keywords (e.g., `n8n`, `Python`, `Django`).\n\n- 🚫 **Duplicate Bid Prevention**  \n  Automatically checks if you’ve already bid on a project and skips it.\n\n- 🤖 **AI Proposal Generation**  \n  Generates short, persuasive, and customized proposals using an AI agent.\n\n- 📬 **Telegram Notifications**  \n  Sends project summaries to Telegram with inline buttons to **Bid** or **Cancel**.\n\n- ✅ **Auto-Bid Submission**  \n  When you approve a project via Telegram, the bid is submitted with predefined values (amount, period, milestone).\n\n- ⏱️ **Manual or Scheduled Execution**  \n  Supports both on-demand and scheduled workflows (hourly, daily, etc.).\n\n## 📌 Requirements\n\n- Freelancer.com API token (OAuth) : --header 'freelancer-oauth-v1: <oauth_access_token>'\n- Telegram Bot API token\n- OpenAI API key (for proposal generation)\n\n## 📎 Use Cases\n\n- Freelancers automating repetitive bidding tasks\n- Agencies managing client profiles\n- Developers experimenting with AI + API + chat integration\n\n## 🔗 Included Workflows\n\n- `freelancerMain` – Kicks off execution with skill input\n- `freelancerAgent` – Performs project search, bidding logic, Telegram prompts, and AI proposal generation\n\n---\n\n> 💡 Tip: You can easily customize the skill query list, bid amount logic, or prompt format in the workflow settings.\n",
+        "height": 1100,
+        "width": 1360
+      },
+      "id": "752e45e4-7dc5-41de-a2ec-4a64766ea919",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -624,
+        -128
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "url": "=https://www.freelancer.com/api/users/0.1/self/",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "options": {}
+      },
+      "id": "9da04592-586a-4ea6-bcd2-d1b183b5342a",
+      "name": "getMyID",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -576,
+        1520
+      ],
+      "typeVersion": 4.2,
+      "retryOnFail": true,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "rdap9NeG9jMsm4bG",
+          "name": "Header Auth account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "amount": "=5"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1248,
+        1488
+      ],
+      "id": "227dbe32-a119-4bbb-85e1-349840546991",
+      "name": "Wait",
+      "webhookId": "c0b22e61-bb44-42b4-a812-0dcda2a4576f",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "yzBCVPiKY2kT80pK",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/yzBCVPiKY2kT80pK",
+          "cachedResultName": "SendError"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "ChatID": "={{ $('SetInputs').item.json.ChatID }}",
+            "error": "={{ $json.error }}"
+          },
+          "matchingColumns": [
+            "ChatID"
+          ],
+          "schema": [
+            {
+              "id": "ChatID",
+              "displayName": "ChatID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "error",
+              "displayName": "error",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -240,
+        1744
+      ],
+      "name": "Call SendError",
+      "id": "4e121f1e-826c-455d-af5f-28486418b694"
+    },
+    {
+      "parameters": {
+        "url": "https://www.freelancer.com/api/projects/0.1/projects/active",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "full_description",
+              "value": "={{ 1}}"
+            },
+            {
+              "name": "limit",
+              "value": "={{ $json.jobs_limit }}"
+            },
+            {
+              "name": "query",
+              "value": "={{ $json.search }}"
+            },
+            {
+              "name": "user_status",
+              "value": "={{ 1 }}"
+            },
+            {
+              "name": "sort_field",
+              "value": "submitdate"
+            },
+            {
+              "name": "reverse_sort",
+              "value": "false"
+            },
+            {
+              "name": "offset",
+              "value": "0"
+            },
+            {
+              "name": "compact",
+              "value": "true"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "83447965-6e45-4b9b-92a3-95c1515c045c",
+      "name": "Search",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -112,
+        1504
+      ],
+      "typeVersion": 4.2,
+      "retryOnFail": true,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "rdap9NeG9jMsm4bG",
+          "name": "Header Auth account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Workflow').item.json.ChatId }}",
+        "text": "=Error:\nthere are error when try to bidding:\n\nMessage: {{ $json.apiMessage }}\n\nStatus: {{ $json.httpStatus }}\n\n",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "fe18b00d-627b-41ab-bb31-dacc23e8975b",
+      "name": "Send error1",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        2192,
+        1744
+      ],
+      "webhookId": "bbdaeb2c-e979-4fdd-9533-a5dc4c423b8d",
+      "typeVersion": 1.2,
+      "credentials": {
+        "telegramApi": {
+          "id": "Xcf8YmDfDfJ9EnEt",
+          "name": "Telegram account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first();\n\nlet httpStatus = null;\nlet apiStatus = null;\nlet apiMessage = null;\n\nconst raw = item.json?.error?.message;\n\nif (typeof raw === 'string') {\n\n  // 1. Extract HTTP status code\n  const statusMatch = raw.match(/^(\\d{3})\\s*-/);\n  if (statusMatch) {\n    httpStatus = parseInt(statusMatch[1], 10);\n  }\n\n  // 2. Extract the quoted JSON string after \" - \"\n  const quotedJsonMatch = raw.match(/-\\s*\"(.*)\"$/);\n  if (quotedJsonMatch) {\n    try {\n      // 3. Unescape the JSON string\n      const unescaped = quotedJsonMatch[1].replace(/\\\\\"/g, '\"');\n\n      // 4. Parse JSON\n      const parsed = JSON.parse(unescaped);\n\n      apiStatus = parsed.status;\n      apiMessage = parsed.message;\n    } catch (e) {\n      // Ignore malformed JSON safely\n    }\n  }\n}\n\nreturn [\n  {\n    json: {\n      httpStatus,\n      apiStatus,\n      apiMessage,\n    },\n  },\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3152,
+        1504
+      ],
+      "id": "ea4076b3-f139-422c-ad1d-6e288ad3123c",
+      "name": "getErrorMessage",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "query",
+              "type": "any"
+            },
+            {
+              "name": "ChatId",
+              "type": "number"
+            },
+            {
+              "name": "jobs_limit",
+              "type": "number"
+            }
+          ]
+        }
+      },
+      "id": "dc958623-ac06-4f9e-8527-7d8a8a404ee8",
+      "name": "Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        -976,
+        1712
+      ],
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-3.5-turbo",
+          "mode": "list",
+          "cachedResultName": "gpt-3.5-turbo"
+        },
+        "responsesApiEnabled": false,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        2208,
+        800
+      ],
+      "id": "67e89eb7-efbe-48b3-8610-1263efe185c2",
+      "name": "OpenAI Chat Model 3.5 turbo",
+      "credentials": {
+        "openAiApi": {
+          "id": "gWSeZbMkmW22RpwV",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-3.5-turbo",
+          "mode": "list",
+          "cachedResultName": "gpt-3.5-turbo"
+        },
+        "options": {}
+      },
+      "id": "9b78a03d-4cf9-4d7a-a5a1-0dc0a4239cd7",
+      "name": "OpenAI Chat Model 3.5 turbo 2",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "position": [
+        2848,
+        640
+      ],
+      "typeVersion": 1.2,
+      "credentials": {
+        "openAiApi": {
+          "id": "gWSeZbMkmW22RpwV",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "670014b6-04be-4a4c-8ab0-a019df5fc701",
+              "leftValue": "={{ $('checkBidding').item.json.result.bids }}",
+              "rightValue": "",
+              "operator": {
+                "type": "array",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "4bb5ddb6-d648-4058-9fbd-a63a9a073f55",
+              "operator": {
+                "type": "array",
+                "operation": "contains",
+                "rightType": "any"
+              },
+              "leftValue": "={{ $json.Bidder_id }}",
+              "rightValue": "={{ $('SetInputs').item.json.My_ID.toNumber() }}"
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "3373a065-998f-4646-80cb-dbdd9c582a8a",
+      "name": "If-1",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        2192,
+        1072
+      ],
+      "typeVersion": 2.2,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "62bf2c07-15bd-45b4-913b-34fbfbee7fc5",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              },
+              "leftValue": "={{ $json.data.approved }}",
+              "rightValue": ""
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "47d8771d-3959-433e-9d66-228c2811da80",
+      "name": "If-2",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        2864,
+        1072
+      ],
+      "typeVersion": 2.2
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "chatId": "={{ $('SetInputs').item.json.ChatID }}\n",
+        "message": "={{ $json.output }}",
+        "approvalOptions": {
+          "values": {
+            "approvalType": "double"
+          }
+        },
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "29ba94fb-acbf-46ce-882f-c9c04b6e391f",
+      "name": "GetApproval1",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        3520,
+        416
+      ],
+      "webhookId": "8a408e11-f0b9-43ce-9bc2-dd8887883950",
+      "typeVersion": 1.2,
+      "credentials": {
+        "telegramApi": {
+          "id": "Xcf8YmDfDfJ9EnEt",
+          "name": "Telegram account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-3.5-turbo",
+          "mode": "list",
+          "cachedResultName": "gpt-3.5-turbo"
+        },
+        "options": {}
+      },
+      "id": "0ab4786f-a1f1-40c2-96e9-da4b5e52e266",
+      "name": "OpenAI Chat Model 3.5 turbo ",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "position": [
+        3008,
+        256
+      ],
+      "typeVersion": 1.2,
+      "credentials": {
+        "openAiApi": {
+          "id": "gWSeZbMkmW22RpwV",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "62bf2c07-15bd-45b4-913b-34fbfbee7fc5",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              },
+              "leftValue": "={{ $json.data.approved }}",
+              "rightValue": ""
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ef76f4bc-8a8d-45cc-bae8-51a99a0b8817",
+      "name": "If-3",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        3712,
+        416
+      ],
+      "typeVersion": 2.2
+    },
+    {
+      "parameters": {
+        "content": "",
+        "height": 688,
+        "width": 1696
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -832,
+        1312
+      ],
+      "typeVersion": 1,
+      "id": "1d41d7cb-fc58-4d1a-9dab-c38e231042b5",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 3
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -976,
+        1520
+      ],
+      "id": "ef019c3e-57f9-4630-96fb-62f0354e8215",
+      "name": "Schedule Trigger",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\n    \"query\": \"linux OR ubuntu OR debian OR sysadmin OR devops OR nginx OR apache OR docker OR kubernetes OR bash\",\n    \"ChatId\": 1874265481,\n    \"jobs_limit\": 100\n  }",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -784,
+        1520
+      ],
+      "id": "c66b5c2a-66f9-4cbf-a79e-f901f5af6382",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Project Title: {{ $('ExtractDate').item.json.Title }}\n\nProject Description: {{ $('ExtractDate').item.json.Description }}\n\nBudget: {{ $('ExtractDate').item.json.budget_minimum }} - {{ $('ExtractDate').item.json.Budget_maximum }}\n\nProject Type: {{ $('ExtractDate').item.json.Type }}",
+        "options": {
+          "systemMessage": "=You are an experienced freelancer specialized in Linux systems, server administration, DevOps, cybersecurity, Linux expert, WordPress and PrestaShop development, automation, python, php, web servers, cloud infrastructure, scripting, and troubleshooting.\n\nYour task is to write a concise, professional proposal for a Freelancer.com job using only the project information provided.\n\nInput:\n- Project Title\n- Project Description\n- Budget\n- Project Type\n\nProposal rules:\n1. Start exactly with the message, don't introduce yourself with: Hi there\n2. Make the proposal specific to the project title and description.\n3. Identify the client’s main problem or goal and briefly explain how you would solve it.\n4. When relevant, mention technologies such as Linux, Ubuntu, Debian, Nginx, Apache, Docker, SSH, Bash, automation, n8n, APIs, monitoring, or server optimization - but only if they match the project.\n5. Do not exaggerate or invent experience.\n6. Do not say “I have read your job post” in a generic way.\n7. Keep it between 150 and 200 words.\n8. Use a confident, direct, professional tone.\n9. Include a soft call to action near the end.\n10. Do not use markdown, bullet points, emojis, headings, or placeholders.\n11. Output only the proposal text.\n12. If the proposal is in Spanish, speak in Spanish, and if it's in English, do the same.\n13. Each proposal should only consider the skills I mention as my main areas:\n\n- MAIN AREAS OF EXPERTISE: Systems Administration (SysAdmin): Linux (Ubuntu, Debian, CentOS, RedHat, AlmaLinux, Rocky), Windows Server (2008–2025), management of dedicated servers, VPS and hosting, Apache, Nginx, Tomcat, DNS, domains, SSL, email and webmail services, HAProxy (load balancing), Samba and network services. Cloud & Infrastructure: AWS (SysOps), Azure, OVHcloud, OpenStack, VMware (ESXi, vSphere), Proxmox, KVM, Virtuozzo, OnApp, SolusVM, high-availability architectures, cloud migrations and optimization, Cloudflare (CDN and security). DevOps & Automation: Docker, Kubernetes (K8S), Jenkins (CI/CD), Bitbucket and GitHub, Ansible, Terraform, automation using Bash and Python, CI/CD pipeline integration, infrastructure and deployment automation. Cybersecurity & Ethical Hacking: Pentesting with Kali Linux, SQL Injection, TCP/IP analysis, OWASP, security audits, firewalls (pfSense, Fortinet, Sophos), WAF, server hardening, VPN (OpenVPN), incident and vulnerability management, cryptography and API security. Development & Backend: PHP (Laravel), Python, Bash, JavaScript, jQuery, HTML5, CSS3, APIs (REST, SOAP, GraphQL, WebSockets), payment gateway integrations (PayPal, Stripe, PayU, MercadoPago), Spring Boot (Java), development of plugins, scripts and automation tools. Systems Integration & APIs: Mulesoft (Anypoint Platform), integrations with Salesforce and SAP, OAuth2, JWT, enterprise integration architectures, business process automation. Databases: MySQL/MariaDB, SQL Server, PostgreSQL, MongoDB, OracleDB, advanced optimization and administration. Monitoring & Observability: Zabbix, Nagios, SolarWinds, Grafana, AWS CloudWatch, Site24x7, proactive alerting, dashboards and real-time metrics analysis. Panels & Hosting: cPanel/WHM, Plesk, Webmin, Virtualmin, DirectAdmin, VestaCP, CloudLinux, WHMCS, HostBill. Backup & Recovery: Veeam Backup, Acronis Backup, JetBackup, R1Soft, disaster recovery strategies (DRP) and business continuity. CMS, eCommerce & Platforms: WordPress, PrestaShop, WooCommerce, OpenCart, Magento, Joomla, Drupal, Moodle. Networking & Infrastructure: VPNs, secure tunnels, firewall configuration, networking, DNS, routing, Active Directory, GPO. Automation & Productivity: Advanced Excel (macros, BI), Power BI, diagramming tools (Draw.io, Visio), Jira, Confluence, Microsoft Teams, SharePoint. Marketing & Extra Skills: email marketing, Facebook Ads, Google Ads, basic web UI design, Photoshop. Key Certifications: Certified Ethical Hacker (CEH), AWS Cloud Practitioner, Microsoft Azure AZ-900, LPIC-1 Linux Administrator, Scrum Master, ISO 27001 Auditor, Kubernetes, cPanel WHM Administrator.\n\n\n"
+        }
+      },
+      "id": "b84d70bd-2dc0-43d1-85df-3ca172086dbd",
+      "name": "AI Agent 2",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        2848,
+        416
+      ],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Rules:\n- Keep the structure\n- Do not remove information\n- Translate everything naturally\n- Keep links unchanged\n- Generate a summary of the provided content. The result should be clear, concise, and not exceed 4096 characters.\n\nText:\n\n# Project Title: {{ $('Loop Over Items').item.json.Title }}\n\n# Link: {{ $('Loop Over Items').item.json.seo_url }}\n\n# Description:\n{{ $('Loop Over Items').item.json.Description }}\n-------------\nBid: {{ $('Loop Over Items').item.json.budget_minimum }} - {{ $('Loop Over Items').item.json.Bid_avg }} - {{ $('Loop Over Items').item.json.Budget_maximum }} \n\nCurrency: {{ $('Loop Over Items').item.json.result.projects[0].currency.code }}\n\nBid Count: {{ $('Loop Over Items').item.json.Bid_count }}",
+        "options": {}
+      },
+      "id": "3a8135a8-c418-49c9-9d2f-3b1d8d6a6b83",
+      "name": "AI Agent 1",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        2208,
+        640
+      ],
+      "typeVersion": 2,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.output }}",
+        "options": {
+          "systemMessage": "=You are a professional translator specialized in technical and freelance proposals.\n\nYour task is to translate the given text accurately while preserving:\n- Original meaning\n- Tone\n- Structure\n- Technical terminology\n\nRules:\n1. Do NOT summarize or rewrite the content.\n2. Do NOT add new information.\n3. Keep the same tone (professional, direct, confident).\n4. Preserve formatting and line breaks.\n5. Translate everything naturally.\n6. Keep links unchanged.\n7. Output ONLY the translated text.\n\nLanguage rule:\n- If the input is in English → translate to Spanish.\n- If the input is in Spanish → translate to English."
+        }
+      },
+      "id": "01abb5d6-d8e5-4862-a2ef-bb14f37472db",
+      "name": "AI Agent 3 - Translate spanish",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        3248,
+        144
+      ],
+      "typeVersion": 2
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "create a bid": {
+      "main": [
+        [
+          {
+            "node": "Send Succuss",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "getErrorMessage",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "ExtractDate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ExtractDate": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SetInputs": {
+      "main": [
+        [
+          {
+            "node": "Search",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Succuss": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GetProjects": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "checkBidding": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "getErrorMessage",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "If-1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GetApproval": {
+      "main": [
+        [
+          {
+            "node": "If-2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Canceled ": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AlreadyBid": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "getMyID": {
+      "main": [
+        [
+          {
+            "node": "SetInputs",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Call SendError",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "checkBidding",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search": {
+      "main": [
+        [
+          {
+            "node": "GetProjects",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Call SendError",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send error1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "getErrorMessage": {
+      "main": [
+        [
+          {
+            "node": "Send error1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model 3.5 turbo": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent 1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model 3.5 turbo 2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent 2",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If-1": {
+      "main": [
+        [
+          {
+            "node": "AlreadyBid",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "AI Agent 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If-2": {
+      "main": [
+        [
+          {
+            "node": "AI Agent 2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Canceled ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model 3.5 turbo ": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent 3 - Translate spanish",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GetApproval1": {
+      "main": [
+        [
+          {
+            "node": "If-3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If-3": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Canceled ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "getMyID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent 2": {
+      "main": [
+        [
+          {
+            "node": "GetApproval1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent 1": {
+      "main": [
+        [
+          {
+            "node": "GetApproval",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent 3 - Translate spanish": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "144a181f-0c1b-4699-8e2e-a36c001bc8c8",
+  "meta": {
+    "instanceId": "f50fc9feda23c3d9a81df777a743f7aa7f0db4dc7dbaeb05fa4b3650252babfc"
+  },
+  "id": "TRPRsKK0ndnwtyqe",
+  "tags": []
+}
